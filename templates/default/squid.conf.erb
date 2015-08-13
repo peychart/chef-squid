@@ -113,30 +113,20 @@ refresh_pattern deb$ 1577846 100% 1577846
 maximum_object_size <%= node['chef-squid']['max_obj_size'] %> <%= node['chef-squid']['max_obj_size_unit'] %>
 cache_mem <%= node['chef-squid']['cache_mem'] %> MB
 
-<% if @directives.is_a? Hash %><%@directives = Array[ @directives ] %><% end %>
-<% if @directives.is_a? Array %>
- <% @directives.each do |v| %>
-  <% if v.is_a? Hash %>
-   <% v.each do |n,w| %>
+<% ( (@directives.is_a? Array) ? @directives : Array[@directives]).each do |v| %>
+ <% if v.is_a? Hash %>
+  <% v.each do |n,w| %>
 <%= "# #{n}:" %>
-    <% if w.is_a? Array %>
-     <% w.each do |x| %>
+   <% w = Array[w] if ! w.is_a? Array %>
+   <% w.each do |x| %>
 <%= x %>
-     <% end %>
-    <% else %>
-<%= w %>
-    <% end %>
+   <% end %>
 
-   <% end %>
-  <% elsif v.is_a? Array %>
-   <% v.each do |w| %>
+  <% end %>
+ <% else %>
+  <% ( (v.is_a? Array) ? v : Array[v]).each do |w| %>
 <%= w %>
-   <% end %>
-  <% else %>
-<%= v %>
   <% end %>
  <% end %>
-<% else %>
-<%= @directives %>
 <% end %>
 
