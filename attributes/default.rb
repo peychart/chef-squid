@@ -47,14 +47,14 @@ default['chef-squid']['acl'] = {}
 default['chef-squid']['http_access']['deny']  = []
 default['chef-squid']['http_access']['allow'] = []
 
-default['chef-squid']['chef-squidGuard']['enable'] = false
-default['chef-squid']['chef-squidGuard']['squid3_confile'] = '/etc/squid3/squid.conf'
-default['chef-squid']['chef-squidGuard']['blacklists_path'] = '/var/lib/squidguard/db'
-default['chef-squid']['chef-squidGuard']['blacklists_urls'] = 'ftp://ftp.univ-tlse1.fr/pub/reseau/cache/squidguard_contrib/blacklists.tar.gz'
+default['chef-squid']['squidGuard']['enable'] = false
+default['chef-squid']['squidGuard']['squid3_confile'] = '/etc/squid3/squid.conf'
+default['chef-squid']['squidGuard']['blacklists_path'] = '/var/lib/squidguard/db'
+default['chef-squid']['squidGuard']['blacklists_urls'] = 'ftp://ftp.univ-tlse1.fr/pub/reseau/cache/squidguard_contrib/blacklists.tar.gz'
 
-default['chef-squid']['chef-squidGuard']['src']['databag_name'] = 'squidGuard_src'
-default['chef-squid']['chef-squidGuard']['dest']['databag_name']= 'squidGuard_dest'
-default['chef-squid']['chef-squidGuard']['acl']['databag_name'] = 'squidGuard_acl'
+default['chef-squid']['squidGuard']['src']['databag_name'] = 'squidGuard_src'
+default['chef-squid']['squidGuard']['dest']['databag_name']= 'squidGuard_dest'
+default['chef-squid']['squidGuard']['acl']['databag_name'] = 'squidGuard_acl'
 
 case platform_family
 

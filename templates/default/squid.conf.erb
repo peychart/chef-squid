@@ -11,7 +11,7 @@
 <% if defined? @auth_param['definition'] && ! @auth_param['definition'].empty? %>
  <% if @auth_param['definition'].is_a? Array %>
   <% @auth_param['definition'].each do |v| %>
-<%= v %>
+auth_param <%= v %>
   <% end %>
  <% else %>
 <%= @auth_param['definition'] %>

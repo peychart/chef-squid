@@ -24,7 +24,7 @@
   end
 end
 
-chefSquidGuard = node['chef-squid']['chef-squidGuard']
+chefSquidGuard = node['chef-squid']['squidGuard']
 
 # chef-squidGuard/libraries/default.rb
 template '/etc/squidguard/squidGuard.conf' do
