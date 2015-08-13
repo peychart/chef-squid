@@ -5,14 +5,14 @@
  <% peer=node['chef-squid']['cache_peer']; if peer.is_a? String %><% peer = Array[peer] %><% end %>
  <% peer.each do |v| %>
 <%= v %>
- <% end %>
+ <% end if ! peer.empty? %>
 <% end %>
 
 <% if defined? @auth_param['definition'] && ! @auth_param['definition'].empty? %>
  <% if @auth_param['definition'].is_a? Array %>
   <% @auth_param['definition'].each do |v| %>
 auth_param <%= v %>
-  <% end %>
+  <% end if ! @auth_param['definition'].empty? %>
  <% else %>
 <%= @auth_param['definition'] %>
  <% end %>
@@ -22,7 +22,7 @@ acl AUTH proxy_auth REQUIRED
   <% if v.is_a? Array %>
    <% v.each do |w| %>
 acl AUTH_EXCEPTION<%= i %> <%= n %> <%= w %>
-   <% end %>
+   <% end if ! v.empty? %>
   <% else %>
 acl AUTH_EXCEPTION<%= i %> <%= n %> <%= v %>
   <% end; i += 1 %>
@@ -62,7 +62,7 @@ acl CONNECT method CONNECT
 # More ACLs.:
 <% ( (@acls.is_a? Array) ? @acls : Array[@acls]).each do |acl| %>
 <% if acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>acl <%= acl %><% end %>
-<% end %>
+<% end if ! ( (@acls.is_a? Array) ? @acls : Array[@acls]).empty? %>
 
 # Access def.:
 http_access allow manager localhost
@@ -73,12 +73,12 @@ http_access deny CONNECT !SSL_ports
 http_access deny !Safe_ports
 <% ( (@deny.is_a? Array) ? @deny : Array[@deny]).each do |acl| %>
 <% if acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access deny <%= acl %><% end %>
-<% end %>
+<% end if ! ( (@deny.is_a? Array) ? @deny : Array[@deny]).empty? %>
 http_access allow localhost
 http_access allow localnet
 <% ( (@allow.is_a? Array) ? @allow : Array[@allow]).each do |acl| %>
 <% if acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access allow <%= acl %><% end %>
-<% end %>
+<% end if ! ( (@allow.is_a? Array) ? @allow : Array[@allow]).empty? %>
 http_access deny all
 
 icp_access allow localnet
@@ -87,7 +87,7 @@ icp_access deny all
 <% if node['chef-squid']['port'].kind_of?(Array) %>
   <% node['chef-squid']['port'].each do |port| %>
 http_port <%= port %>
-  <% end %>
+  <% end if ! node['chef-squid']['port'].empty? %>
 <% else %>
 http_port <%= node['chef-squid']['port'] %>
 <% end %>
@@ -128,5 +128,5 @@ cache_mem <%= node['chef-squid']['cache_mem'] %> MB
 <%= w %>
   <% end %>
  <% end %>
-<% end %>
+<% end if ! ( (@directives.is_a? Array) ? @directives : Array[@directives]).empty? %>
 
