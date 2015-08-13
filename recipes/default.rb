@@ -82,7 +82,7 @@ cookbook_file "#{node['chef-squid']['config_dir']}/mime.conf" do
   mode 00644
 end
 
-# TODO:
+# TODO
 file "#{node['chef-squid']['config_dir']}/msntauth.conf" do
   action :delete
 end
@@ -101,9 +101,25 @@ template node['chef-squid']['config_file'] do
     )
 end
 
+confile = node['chef-squid']['config_file']
+bash "squidCookbookBug" do
+ code "USER=\"$(grep -s '^[^#]*cache_effective_user' #{confile}| cut -d' ' -f2)\"; DIR=\"$(grep -s '^[^#]*cache_dir' #{confile}| cut -d' ' -f3)\"; mkdir -p \"$DIR\"; [ -d \"$DIR\" ] && [ ! -z \"$USER\" ] && chown \"$USER\" \"$DIR\"; DIR=\"$(dirname $DIR)/log\"; mkdir -p \"$DIR\"; [ -d \"$DIR\" ] && [ ! -z \"$USER\" ] && chown \"$USER\" \"$DIR\"; cd /var/log && if [ -d \"$DIR\" ]; then for i in squid3 squidguard; do [ -d \"$i\" ] && mv \"$i\" \"$DIR\"; mkdir -p \"$DIR/$i\"; [ ! -z \"$USER\" ] && chown \"$USER\" \"$DIR/$i\"; ln -sf \"$DIR/$i\" /var/log/; done; fi"
+#  only_if do ::File.exists?( confile ) end
+end
+
+auth_param_def = node['chef-squid']['auth_param']['definition']
+if defined? auth_param_def && !auth_param_def.empty?
+  include_recipe 'chef-squid::ldap_auth'
+end
+
+if defined? node['chef-squid']['squidGuard'] && node['chef-squid']['squidGuard']['enable']
+  include_recipe 'chef-squid::squidGuard'
+end
+
 # services
 service node['chef-squid']['service_name'] do
   supports :restart => true, :status => true, :reload => true
   provider Chef::Provider::Service::Upstart if platform?('ubuntu')
   action [:enable, :start]
 end
+

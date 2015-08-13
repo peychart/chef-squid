@@ -17,6 +17,7 @@
     "amazon": ">= 0.0.0"
   },
   "dependencies": {
+    "apache2": ">= 0.0.0"
   },
   "recommendations": {
   },
