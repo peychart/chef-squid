@@ -1,0 +1,142 @@
+# This file generated from a Chef template.
+# chef-squid/templates/default.squid.conf.erb
+
+<% if defined? node['chef-squid']['cache_peer'] %>
+ <% peer=node['chef-squid']['cache_peer']; if peer.is_a? String %><% peer = Array[ peer ] %><% end %>
+ <% peer.each do |v| %>
+<%= v %>
+ <% end %>
+<% end %>
+
+<% if defined? @auth_param['definition'] && ! @auth_param['definition'].empty? %>
+ <% if @auth_param['definition'].is_a? Array %>
+  <% @auth_param['definition'].each do |v| %>
+<%= v %>
+  <% end %>
+ <% else %>
+<%= @auth_param['definition'] %>
+ <% end %>
+
+acl AUTH proxy_auth REQUIRED
+ <% i=0; @auth_param['acl_exception'].each do |n,v| %>
+  <% if v.is_a? Array %>
+   <% v.each do |w| %>
+acl AUTH_EXCEPTION<%= i %> <%= n %> <%= w %>
+   <% end %>
+  <% else %>
+acl AUTH_EXCEPTION<%= i %> <%= n %> <%= v %>
+  <% end; i += 1 %>
+ <% end %>
+http_access deny !AUTH<% while i>0 do i-=1 %><%= " !AUTH_EXCEPTION#{i}" -%><% end %>
+<% end %>
+<%= "acl all src" if node['chef-squid']['version'].to_i < 3 %>
+<%= "acl manager proto cache_object" if node['chef-squid']['version'].to_f < 3.2 %>
+acl localhost src 127.0.0.1/32
+acl localnet src 10.0.0.0/8	# RFC1918 possible internal network
+acl localnet src 172.16.0.0/12	# RFC1918 possible internal network
+acl localnet src 192.168.0.0/16	# RFC1918 possible internal network
+acl localnet src fc00::/7       # RFC4193 local private network range
+acl localnet src fe80::/10      # RFC4291 link-local (directly-plugged) machine
+
+acl SSL_ports port 443		# https
+acl SSL_ports port 563		# snews
+acl SSL_ports port 873		# rsync
+
+acl Safe_ports port 80		# http
+acl Safe_ports port 21		# ftp
+acl Safe_ports port 443		# https
+acl Safe_ports port 70		# gopher
+acl Safe_ports port 210		# wais
+acl Safe_ports port 1025-65535	# unregistered ports
+acl Safe_ports port 280		# http-mgmt
+acl Safe_ports port 488		# gss-http
+acl Safe_ports port 591		# filemaker
+acl Safe_ports port 777		# multiling http
+acl Safe_ports port 631		# cups
+acl Safe_ports port 873		# rsync
+acl Safe_ports port 901		# SWAT
+
+acl purge method PURGE
+acl CONNECT method CONNECT
+
+# More ACLs.:
+<% @acls.each do |acl| %>
+<% if acl == '' %><% else if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>acl <%= acl %><% end %>
+<% end %>
+
+# Access def.:
+http_access allow manager localhost
+http_access deny manager
+http_access allow purge localhost
+http_access deny purge
+http_access deny CONNECT !SSL_ports
+http_access deny !Safe_ports
+<% @deny.each  do |acl| %>
+<% if acl == '' %><% else if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access deny <%= acl %><% end %>
+<% end %>
+http_access allow localhost
+http_access allow localnet
+<% @allow.each do |acl| %>
+<% if acl == '' %><% else if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access allow <%= acl %><% end %>
+<% end %>
+http_access deny all
+
+icp_access allow localnet
+icp_access deny all
+
+<% if node['chef-squid']['port'].kind_of?(Array) %>
+  <% node['chef-squid']['port'].each do |port| %>
+http_port <%= port %>
+  <% end %>
+<% else %>
+http_port <%= node['chef-squid']['port'] %>
+<% end %>
+
+hierarchy_stoplist cgi-bin ?
+access_log <%= node['chef-squid']['log_dir'] %>/access.log squid
+refresh_pattern	    ^ftp:			1440	20%	10080
+refresh_pattern     ^gopher:			1440	0%	1440
+refresh_pattern	    -i (/cgi-bin/|\?)		0	0%	0
+refresh_pattern     (Release|Package(.gz)*)$	0	20%	2880
+# refresh_pattern	    \.deb$			1440    20%	10080
+# refresh_pattern	    \.rpm$			1440    20%	10080
+# refresh_pattern	    \.iso$			1440    20%	10080
+# refresh_pattern	    \.$			1440    20%	10080
+# refresh_pattern	    .				0	20%	4320
+hosts_file /etc/hosts
+
+<%- if node['chef-squid']['enable_cache_dir'] %>
+cache_dir ufs <%= node['chef-squid']['cache_dir'] %> <%= node['chef-squid']['cache_size'] %> 16 256
+<%- end %>
+coredump_dir <%= node['chef-squid']['coredump_dir'] %>
+refresh_pattern deb$ 1577846 100% 1577846
+maximum_object_size <%= node['chef-squid']['max_obj_size'] %> <%= node['chef-squid']['max_obj_size_unit'] %>
+cache_mem <%= node['chef-squid']['cache_mem'] %> MB
+
+<% if @directives.is_a? Hash %><%@directives = Array[ @directives ] %><% end %>
+<% if @directives.is_a? Array %>
+ <% @directives.each do |v| %>
+  <% if v.is_a? Hash %>
+   <% v.each do |n,w| %>
+<%= "# #{n}:" %>
+    <% if w.is_a? Array %>
+     <% w.each do |x| %>
+<%= x %>
+     <% end %>
+    <% else %>
+<%= w %>
+    <% end %>
+
+   <% end %>
+  <% elsif v.is_a? Array %>
+   <% v.each do |w| %>
+<%= w %>
+   <% end %>
+  <% else %>
+<%= v %>
+  <% end %>
+ <% end %>
+<% else %>
+<%= @directives %>
+<% end %>
+

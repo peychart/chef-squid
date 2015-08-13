@@ -1,0 +1,49 @@
+--- squid-3.0.STABLE6/helpers/basic_auth/LDAP/squid_ldap_auth.c.org	2008-05-20 05:01:10.000000000 -1000
++++ squid-3.0.STABLE6/helpers/basic_auth/LDAP/squid_ldap_auth.c	2009-05-15 12:56:19.000000000 -1000
+# This patch allows on more verification on squid authorisations but is VERY specific in the LDAP schema of the domain "gov.pf" !...
+# Compilation : cd squid-3.0.STABLE6/ ; ./configure --enable-basic-auth-helpers=LDAP ; make
+# Syntax example (in squid.conf context):
+# auth_param basic program /usr/local/squid/libexec/squid_ldap_auth -v 3 -b dc=gov,dc=pf -f "(uid=%s)" -F "cn=proxyAccess,ou=roleApplicatif,ou=proxy,ou=application," newldap
+#
+@@ -134,6 +134,7 @@
+ static const char *bindpasswd = NULL;
+ static const char *userattr = "uid";
+ static const char *passwdattr = NULL;
++static const char *oneMoreFilter = NULL;
+ static int searchscope = LDAP_SCOPE_SUBTREE;
+ static int persistent = 0;
+ static int bind_once = 0;
+@@ -495,6 +496,9 @@
+ 	case 'd':
+ 	    debug++;
+ 	    break;
++	case 'F':
++	    oneMoreFilter = value;
++	    break;
+ 	default:
+ 	    fprintf(stderr, PROGRAM_NAME ": ERROR: Unknown command line option '%c'\n", option);
+ 	    exit(1);
+@@ -744,6 +748,23 @@
+ 	}
+     } else if (ldap_simple_bind_s(bind_ld, dn, password) != LDAP_SUCCESS)
+ 	ret = 1;
++
++    if ( !ret && oneMoreFilter ) {		// one More control before to confirm the uid authorization :
++    	char filter[16384];
++    	char *rootDn=dn;
++
++    	if ( oneMoreFilter[strlen(oneMoreFilter)-1] == ',' ) {	// parameter of the "-F" option must be completed ...
++    		while ( *rootDn ) if ( *rootDn++ == ',' )	// Extract "dc" root of the uid dn ...
++    			if ( strncmp ( rootDn, "dc=", 3 ) == 0 )
++    				break;
++    		strcpy ( filter, oneMoreFilter ); strcat ( filter, rootDn );
++    	} else	strcpy ( filter, oneMoreFilter );
++
++    	// verification que le champ "memberUid" contient bien le "userid" a authentifier :
++    	if (ldap_compare_s(bind_ld, filter, "memberUid", userid) != LDAP_COMPARE_TRUE)
++	    ret = 1;
++    }
++
+     if (bind_ld != persistent_ld) {
+ 	ldap_unbind(bind_ld);
+ 	bind_ld = NULL;
