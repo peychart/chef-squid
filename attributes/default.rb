@@ -43,9 +43,9 @@ default['chef-squid']['enable_cache_dir'] = true
 default['chef-squid']['auth_param']['definition'] = []
 default['chef-squid']['auth_param']['acl_exception'] = {}
 
-default['chef-squid']['acl'] = {}
-default['chef-squid']['http_access']['deny']  = []
-default['chef-squid']['http_access']['allow'] = []
+default['chef-squid']['acl'] = nil
+default['chef-squid']['http_access']['deny']  = nil
+default['chef-squid']['http_access']['allow'] = nil
 
 default['chef-squid']['squidGuard']['enable'] = false
 default['chef-squid']['squidGuard']['squid3_confile'] = '/etc/squid3/squid.conf'

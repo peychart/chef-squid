@@ -5,7 +5,7 @@
  <% peer=node['chef-squid']['cache_peer']; if peer.is_a? String %><% peer = Array[peer] %><% end %>
  <% peer.each do |v| %>
 <%= v %>
- <% end if ! peer.empty? %>
+ <% end if peer && ! peer.empty? %>
 <% end %>
 
 <% if defined? @auth_param['definition'] && ! @auth_param['definition'].empty? %>
@@ -61,7 +61,7 @@ acl CONNECT method CONNECT
 
 # More ACLs.:
 <% ( (@acls.is_a? Array) ? @acls : Array[@acls]).each do |acl| %>
-<% if acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>acl <%= acl %><% end %>
+<% if acl && acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>acl <%= acl %><% end %>
 <% end if ! ( (@acls.is_a? Array) ? @acls : Array[@acls]).empty? %>
 
 # Access def.:
@@ -72,12 +72,12 @@ http_access deny purge
 http_access deny CONNECT !SSL_ports
 http_access deny !Safe_ports
 <% ( (@deny.is_a? Array) ? @deny : Array[@deny]).each do |acl| %>
-<% if acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access deny <%= acl %><% end %>
+<% if acl && acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access deny <%= acl %><% end %>
 <% end if ! ( (@deny.is_a? Array) ? @deny : Array[@deny]).empty? %>
 http_access allow localhost
 http_access allow localnet
 <% ( (@allow.is_a? Array) ? @allow : Array[@allow]).each do |acl| %>
-<% if acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access allow <%= acl %><% end %>
+<% if acl && acl != '' %><% if acl.strip[0] == '#'; acl=acl.strip[1..-1].strip %># <% end %>http_access allow <%= acl %><% end %>
 <% end if ! ( (@allow.is_a? Array) ? @allow : Array[@allow]).empty? %>
 http_access deny all
 
