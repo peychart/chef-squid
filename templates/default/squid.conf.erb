@@ -8,13 +8,10 @@
  <% end if peer && ! peer.empty? %>
 <% end %>
 
-<% if defined? @auth_param['definition'] && ! @auth_param['definition'].empty? %>
- <% if @auth_param['definition'].is_a? Array %>
-  <% @auth_param['definition'].each do |v| %>
+<% @auth_param['definition']=[] if @auth_param['definition']==''; auth_param_def=( (@auth_param['definition'].is_a? Array) ? @auth_param['definition'] : Array[@auth_param['definition']] ) %>
+<% if ! auth_param_def.empty? %>
+ <% auth_param_def.each do |v| %>
 auth_param <%= v %>
-  <% end if ! @auth_param['definition'].empty? %>
- <% else %>
-<%= @auth_param['definition'] %>
  <% end %>
 
 acl AUTH proxy_auth REQUIRED
@@ -27,7 +24,7 @@ acl AUTH_EXCEPTION<%= i %> <%= n %> <%= w %>
 acl AUTH_EXCEPTION<%= i %> <%= n %> <%= v %>
   <% end; i += 1 %>
  <% end %>
-http_access deny !AUTH<% while i>0 do i-=1 %><%= " !AUTH_EXCEPTION#{i}" -%><% end %>
+http_access deny<% while i>0 do i-=1 %><%= " !AUTH_EXCEPTION#{i}" -%> !AUTH<% end %>
 <% end %>
 <%= "acl all src" if node['chef-squid']['version'].to_i < 3 %>
 <%= "acl manager proto cache_object" if node['chef-squid']['version'].to_f < 3.2 %>
