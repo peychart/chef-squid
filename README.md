@@ -96,6 +96,31 @@ Example Databag with chef-serviceAttributes
 Coming soon...
 ```
 
+Example of role definition
+--------------------------
+
+```json
+{
+ "override_attributes": {
+    "chef-serviceAttributes": {
+      "service": [
+        "squid"
+      ]
+    }
+  },
+  "run_list": [
+    "recipe[chef-serviceAttributes]",	// See: https://github.com/peychart/chef-serviceAttributes
+    "recipe[chef-lvm]",
+    "recipe[chef-hostsfile]",
+    "recipe[sysctl::apply]",
+    "recipe[limits]",
+    "recipe[chef-squid]",
+    "recipe[apache2::mod_php5]",
+    "recipe[chef-iptables]"
+  ]
+}
+```
+
 Use in Ubuntu charm
 -------------------
 
