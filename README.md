@@ -49,8 +49,6 @@ node['chef-squid']['auth_param']
 Usage
 -----
 
-...
-
 ### About LDAP Authentication
 
 # squid_ldap_auth patch
@@ -106,8 +104,10 @@ Usage
 Coming soon...
 ```
 
-Example Databag with chef-serviceAttributes
--------------------------------------------
+Databag example with chef-serviceAttributes cookbook
+----------------------------------------------------
+
+Data bag "service":
 
 ```text
 {
