@@ -18,6 +18,7 @@ The optionals (`node['chef-squid']['cache_peer']`, node['chef-squid']['auth_para
 * node['chef-squid']['auth_param']['definition']: can be a string or an array of strings,
 * node['chef-squid']['directives']: can be a string, an array of strings, a hash (Hash[0] will be a comment in conf) or an array of hashs (hashs contain strings or strings arrays).
 
+node['chef-squid']['auth_param']['acl_exception']: allows to sets, if needed, some acls which can be excluded from authentification.
 
 Example:
 
@@ -33,6 +34,8 @@ Example:
         "basic realm Authentification SIPf LDAP, merci de vous authentifier.",
         "basic credentialsttl 1 minutes"
  ]
+ node['chef-squid']['auth_param']['acl_exception']['dstdomain'] = "squid"
+ node['chef-squid']['auth_param']['acl_exception']['srcdomain'] = [ ".srv.gov.pf", ".dev.gov.pf" ]
  ...
  node['chef-squid']['directives']['LOGS'] = [
         "## Logs format for awstats ##",
