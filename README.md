@@ -6,28 +6,41 @@ Configures squid as a caching proxy.
 
 Recipes
 -------
-### default
+### default attributes
 
-```text
+See: https://github.com/peychart/chef-squid/blob/master/attributes/default.rb
+
 All default attributes can be modified.
 
-The optionals (`node['squid']['cache_peer']` and `node['squid']['directives']`), if set, will be written verbatim to the template.
+The optionals (`node['chef-squid']['cache_peer']`, node['chef-squid']['auth_param']['definition'] and `node['chef-squid']['directives']`), if set, will be written verbatim to the template.
 
-node['squid']['cache_peer']: can be a string or an array of strings,
-node['squid']['directives']: can be a string, an array of strings, a hash (Hash[0] will be a comment in conf) or an array of hashs (hashs contain strings or strings arrays).
+node['chef-squid']['cache_peer']: can be a string or an array of strings,
+node['chef-squid']['auth_param']['definition']: can be a string or an array of strings,
+node['chef-squid']['directives']: can be a string, an array of strings, a hash (Hash[0] will be a comment in conf) or an array of hashs (hashs contain strings or strings arrays).
 
 Example:
 
- node['squid']['directives']['REDIRECT_PROGRAM'] = [
+```text
+ node['chef-squid']['directives']['REDIRECT_PROGRAM'] = [
         "redirect_program /usr/bin/squidGuard",
         "redirect_children 60"
  ]
- node['squid']['directives']['LOGS'] = [
+ ...
+ node['chef-squid']['auth_param']['definition'] = [
+        "basic program /usr/local/sbin/basic_ldap_auth -v 3 -b dc=gov,dc=pf -f \"(uid=%s)\" -F \"cn=proxyAccess,cn=squid,ou=applications,dc=gov,dc=pf\" ldap.srv.gov.pf",
+        "basic children 70",
+        "basic realm Authentification SIPf LDAP, merci de vous authentifier.",
+        "basic credentialsttl 1 minutes"
+ ]
+ ...
+ node['chef-squid']['directives']['LOGS'] = [
         "## Logs format for awstats ##",
         "logformat combined %>a %ui %un [%{%d/%b/%Y:%H:%M:%S +0000}tl] \"%rm %ru HTTP/%rv\" %Hs %<st \"%{Referer}>h\" \"%{User-Agent}>h\" %Ss:%Sh",
         "access_log stdio:/var/log/squid3/access.log combined"
  ]
 ```
+
+node['chef-squid']['auth_param']
 
 Usage
 -----
