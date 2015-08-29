@@ -15,8 +15,11 @@ All default attributes can be modified.
 The optionals (`node['chef-squid']['cache_peer']`, node['chef-squid']['auth_param']['definition'] and `node['chef-squid']['directives']`), if set, will be written verbatim to the template.
 
 node['chef-squid']['cache_peer']: can be a string or an array of strings,
+
 node['chef-squid']['auth_param']['definition']: can be a string or an array of strings,
+
 node['chef-squid']['directives']: can be a string, an array of strings, a hash (Hash[0] will be a comment in conf) or an array of hashs (hashs contain strings or strings arrays).
+
 
 Example:
 
