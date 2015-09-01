@@ -1,12 +1,9 @@
 # This file generated from a Chef template.
 # chef-squid/templates/default.squid.conf.erb
 
-<% if defined? node['chef-squid']['cache_peer'] %>
- <% peer=node['chef-squid']['cache_peer']; if peer.is_a? String %><% peer = Array[peer] %><% end %>
- <% peer.each do |v| %>
-<%= v %>
- <% end if peer && ! peer.empty? %>
-<% end %>
+<% @cache_peer.each do |i| %>
+<%= i %>
+<% end if (@cache_peer.is_a? Array) && @cache_peer.any? %>
 
 <% @auth_param['definition']=[] if @auth_param['definition']==''; auth_param_def=( (@auth_param['definition'].is_a? Array) ? @auth_param['definition'] : Array[@auth_param['definition']] ) %>
 <% if ! auth_param_def.empty? %>

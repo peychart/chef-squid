@@ -87,12 +87,20 @@ file "#{node['chef-squid']['config_dir']}/msntauth.conf" do
   action :delete
 end
 
+# cache_peer:
+cache_peer = node.default['chef-squid']['cache_peer']
+cache_peer = Array[cache_peer] if ! cache_peer.is_a? Array
+search("node", "domain:#{node['domain']} AND chef-squid_cache_peer_siblings_option:*").each do |server|
+  cache_peer << "cache_peer #{server['fqdn']} sibling #{node['chef-squid']['cache_peer_siblings_option']}" if server['fqdn'] != node['fqdn']
+end if node['chef-squid']['cache_peer_siblings_option'] && node['chef-squid']['cache_peer_siblings_option']!=""
+
 # squid config
 template node['chef-squid']['config_file'] do
   source 'squid.conf.erb'
   notifies :reload, "service[#{node['chef-squid']['service_name']}]"
   mode 00644
   variables(
+    :cache_peer => cache_peer.uniq,
     :auth_param => node['chef-squid']['auth_param'],
     :acls => node['chef-squid']['acl'],
     :deny => node['chef-squid']['http_access']['deny'],
