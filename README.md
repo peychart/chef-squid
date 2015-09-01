@@ -20,6 +20,8 @@ The optionals (`node['chef-squid']['cache_peer']`, node['chef-squid']['auth_para
 
 node['chef-squid']['auth_param']['acl_exception']: allows to sets, if needed, some acls which can be excluded from authentification.
 
+if node['chef-squid']['cache_peer_siblings_option'] is defined, all squid nodes in the same 'dnsdomainname' will be added as sibling in the 'cache_peer' definition with this option...
+
 Example:
 
 ```text
@@ -146,8 +148,8 @@ Data bag "service":
     "cache_peer": [
       "icp_port 3130",
       "icp_access allow all",
-      "cache_peer squid2.toriki.srv.my.domain sibling 3128 3130"
     ],
+    "cache_peer_siblings_option": "3128 3130",
     "acl": [
       "Safe_ports port 444",
       ...
