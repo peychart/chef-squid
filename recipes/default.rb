@@ -60,14 +60,6 @@
 # packages
 package node['chef-squid']['package']
 
-# rhel_family sysconfig
-template '/etc/sysconfig/squid' do
-  source 'redhat/sysconfig/squid.erb'
-  notifies :restart, "service[#{node['chef-squid']['service_name']}]", :delayed
-  mode 00644
-  only_if { platform_family? 'rhel', 'fedora' }
-end
-
 # squid config dir
 directory node['chef-squid']['config_dir'] do
   action :create

@@ -30,7 +30,7 @@ default['chef-squid']['config_file'] = '/etc/squid/squid.conf'
 default['chef-squid']['log_dir'] = '/var/log/squid'
 default['chef-squid']['cache_dir'] = '/var/spool/squid'
 default['chef-squid']['coredump_dir'] = '/var/spool/squid'
-default['chef-squid']['service_name'] = 'squid'
+default['chef-squid']['service_name'] = 'squid3'
 default['chef-squid']['acl_element'] = 'url_regex'
 
 default['chef-squid']['listen_interface'] = node['network']['interfaces'].dup.reject { |k, v| k == 'lo' }.keys.first
