@@ -38,7 +38,7 @@ end
 def chef_squidGuard_load_values( d, type, name='' )
   definitions = {}
   begin
-    data_bag( d[type]['databag_name'] ).each do |bag|
+    data_bag( d[type]['databag_name'] ).sort.each do |bag|
       data_bag_item( d[type]['databag_name'], bag ).each do |n, v|
         if n != 'id'
           if ! definitions
