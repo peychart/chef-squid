@@ -69,8 +69,8 @@ end if dirname && confile
 
 web_app "squid" do
   cookbook 'apache2'
-  server_name 'squid'
-  server_aliases [node['fqdn'], "squid"]
+  server_name 'node['fqdn']'
+  server_aliases ['squid']
   docroot "/var/lib/squidguard/db/html"
   enable true
 end
