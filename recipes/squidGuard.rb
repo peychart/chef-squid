@@ -63,7 +63,7 @@ bash "createdb" do
 end
 
 bash "chown" do
-  code "usr=$(echo $(grep -s '^[^#]*cache_effective_user' #{confile})| cut -d' ' -f2); chown -R ${usr:=root} #{dirname}"
+  code "usr=$(echo $(grep -s '^[^#]*cache_effective_user' #{confile})| cut -d' ' -f2); chown -RP ${usr:=root} #{dirname}"
   only_if do ::File.exists?("#{dirname}/") end
 end if dirname && confile
 
